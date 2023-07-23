@@ -1,0 +1,22 @@
+{
+  "name": "node-natours",
+  "version": "1.0.0",
+  "description": "Learning Node, Express and MongoDB",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AsgarovAsgar/node-natours.git"
+  },
+  "author": "Asgar Asgarov",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AsgarovAsgar/node-natours/issues"
+  },
+  "homepage": "https://github.com/AsgarovAsgar/node-natours#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
