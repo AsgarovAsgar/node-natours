@@ -10,7 +10,7 @@ mongoose.connect(DB, {
   useNewUrlParser: true,
   useCreateIndex: true,
   useFindAndModify: false
-}).then(() => console.log('success') )
+}).then(() => console.log('connected database successfully') )
 
 const port = process.env.PORT || 8000;
 app.listen(port, () => {
