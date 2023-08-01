@@ -198,4 +198,6 @@ const getMonthlyPlan = async (req, res) => {
   }
 }
 
+//test
+
 module.exports = { aliasTopTours, getAllTours, getTour, createTour, updateTour, deleteTour, getTourStats, getMonthlyPlan }
