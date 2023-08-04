@@ -93,5 +93,7 @@ tourSchema.pre('aggregate', function(next) {
   next()
 })
 
+//DATA VALIDATION
+
 const Tour = mongoose.model('Tour', tourSchema) // this is a model
 module.exports = Tour
