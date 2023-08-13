@@ -17,6 +17,11 @@ const userSchema = new mongoose.Schema({
   photo: {
     type: String
   },
+  role: {
+    type: String,
+    enum: ['user', 'guide', 'lead-guide', 'admin'],
+    default: 'user'
+  },
   password: {
     type: String,
     required: [true, 'Please, provide a password'],
@@ -36,7 +41,7 @@ const userSchema = new mongoose.Schema({
   },
   passwordChangedAt: {
     type: Date,
-    required: [true, 'Please changed at'],
+    required: [false, 'Please provide change time. Sometimes you need it.'],
   }
 })
 
