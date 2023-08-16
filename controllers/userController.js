@@ -3,7 +3,15 @@ const User = require('../models/userModel')
 const catchAsync = require('../utils/catchAsync')
 const AppError = require('./../utils/appError')
 
-const getAllUsers = catchAsync(async (req, res, next) => {
+const filterObj = (obj, ...allowedFields) => {
+  const newObj = {}
+  Object.keys(obj).forEach(el => {
+    if(allowedFields.includes(el)) newObj[el] = obj[el]
+  })
+  return newObj
+}
+
+exports.getAllUsers = catchAsync(async (req, res, next) => {
   const users = await User.find()
 
   //SEND RESPONSE
@@ -14,45 +22,65 @@ const getAllUsers = catchAsync(async (req, res, next) => {
   });
 })
 
-const createUser = (req, res) => {
+exports.createUser = (req, res) => {
   res.status(500).json({
     status: 'error',
     message: 'This route is not defined yet!'
   })
 }
 
-const updateMe = (req, res, next) => {
+exports.updateMe = catchAsync(async (req, res, next) => {
   // 1) Create error if user POSTs password data
   if(req.body.password || req.body.passwordConfirm) {
     return next(new AppError('This route is not for password updates. Please use /updateMyPassword', 400))
   }
 
-  // 2) Update user document
+  // 2) Filter out unwanted field names that are not allowed to be updated
+  const filteredBody = filterObj(req.body, 'name', 'email')
+
+  console.log('filteredBody', filteredBody);
+  // 3) Update user document
+  const updatedUser = await User.findByIdAndUpdate(req.user.id, filteredBody, {
+    new: true,
+    runValidators: true
+  })
+
   res.status(200).json({
     status: 'success',
-    message: 'update'
+    data: {
+      user: updatedUser
+    } 
   })
-}
+})
 
-const getUser = (req, res) => {
+exports.deleteMe = catchAsync(async (req, res, next) => {
+  await User.findByIdAndUpdate(req.user.id, { active: false })
+
+  res.status(204).json({
+    status: 'success',
+    data: null
+  })
+})
+
+exports.getUser = (req, res) => {
   res.status(500).json({
     status: 'error',
     message: 'This route is not defined yet!'
   })
 }
 
-const updateUser = (req, res) => {
+exports.updateUser = (req, res) => {
   res.status(500).json({
     status: 'error',
     message: 'This route is not defined yet!'
   })
 }
 
-const deleteUser = (req, res) => {
+exports.deleteUser = (req, res) => {
   res.status(500).json({
     status: 'error',
     message: 'This route is not defined yet!'
   })
 }
 
-module.exports = { getAllUsers, createUser, getUser, updateUser, deleteUser }
+// module.exports = { getAllUsers, createUser, getUser, updateUser, deleteUser, updateMe }
