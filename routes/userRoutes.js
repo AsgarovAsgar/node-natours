@@ -12,6 +12,7 @@ router.post('/forgotPassword', forgotPassword)
 router.patch('/resetPassword/:token', resetPassword)
 router.patch('/updateMyPassword', protect, updatePassword)
 
+router.get('/me', protect, userController.getMe, userController.getUser)
 router.patch('/updateMe', protect, userController.updateMe)
 router.delete('/deleteMe', protect, userController.deleteMe)
 
