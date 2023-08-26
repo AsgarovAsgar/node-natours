@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Tour = require('./tourModel')
 
-const ReviewSchema = new mongoose.Schema({
+const reviewSchema = new mongoose.Schema({
   review: {
     type: String,
     required: [true, 'Review cannot be empty!']
@@ -31,7 +31,9 @@ const ReviewSchema = new mongoose.Schema({
   toObject: { virtuals: true }
 })
 
-ReviewSchema.pre(/^find/, function(next) {
+reviewSchema.index({ tour: 1, user: 1 }, { unique: true })
+
+reviewSchema.pre(/^find/, function(next) {
   this
   // .populate({
   //   path: 'tour',
@@ -44,7 +46,7 @@ ReviewSchema.pre(/^find/, function(next) {
   next()
 })
 
-ReviewSchema.statics.calcAverageRatings = async function(tourId) {
+reviewSchema.statics.calcAverageRatings = async function(tourId) {
   const stats = await this.aggregate([
     {
       $match: { tour: tourId }
@@ -67,21 +69,21 @@ ReviewSchema.statics.calcAverageRatings = async function(tourId) {
       ratingsAverage: 4.5
     })
   }
-  console.log({stats});
+  // console.log({stats});
 }
 
-ReviewSchema.post('save', function() {
+reviewSchema.post('save', function() {
   this.constructor.calcAverageRatings(this.tour)
 })
 
-ReviewSchema.pre(/^findOneAnd/, async function(next) {
+reviewSchema.pre(/^findOneAnd/, async function(next) {
   this.r = await this.findOne()
   next()
 })
 
-ReviewSchema.post(/^findOneAnd/, async function() {
+reviewSchema.post(/^findOneAnd/, async function() {
   await this.r.constructor.calcAverageRatings(this.r.tour)
 })
 
-const Review = mongoose.model('Review', ReviewSchema)
+const Review = mongoose.model('Review', reviewSchema)
 module.exports = Review
