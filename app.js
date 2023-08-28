@@ -1,3 +1,4 @@
+const path = require('path')
 const express = require("express");
 const morgan = require('morgan')
 const rateLimit = require('express-rate-limit')
@@ -8,6 +9,9 @@ const hpp = require('hpp')
 
 const app = express();
 
+app.set('view engine',  'pug');
+app.set('views', path.join(__dirname, 'views'))
+
 const AppError = require('./utils/appError')
 const globalErrorHandler = require('./controllers/errorController')
 
@@ -16,6 +20,8 @@ const userRouter = require(`${__dirname}/routes/userRoutes`)
 const reviewRouter = require(`${__dirname}/routes/reviewRoutes`)
 
 // 1) GLOBAL MIDDLEWARES
+//serving static files
+app.use(express.static(path.join(__dirname, 'public')))
 
 // Set security HTTP covers
 app.use(helmet())
@@ -48,7 +54,7 @@ app.use(hpp({
 }))
 
 // Serving static files
-app.use(express.static(`${__dirname}/public`))
+// app.use(express.static(`${__dirname}/public`))
 
 // place middleware before route functions
 // app.use((req, res, next) => {
@@ -68,6 +74,9 @@ app.use((req, res, next) => {
 
 
 // 3) ROUTES
+app.get('/', (req, res) => {
+  res.status(200).render('base')
+})
 
 // mounting the routes
 app.use('/api/v1/tours', tourRouter)
