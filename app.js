@@ -99,8 +99,4 @@ app.all('*', (req, res, next) => {
 app.use(globalErrorHandler)
 
 // 4) START SERVER
-
-// data modelling
-
-
 module.exports = app
