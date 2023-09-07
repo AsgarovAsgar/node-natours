@@ -72,6 +72,8 @@ const protect = catchAsync(async (req, res, next) => {
   let token
   if(req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
     token = req.headers.authorization.split(' ')[1]
+  } else if(req.cookies.jwt) {
+    token = req.cookies.jwt
   }
 
   console.log(token);
@@ -95,6 +97,29 @@ const protect = catchAsync(async (req, res, next) => {
 
   // GRANT ACCESS TO PROTECTED ROUTES
   req.user = currentUser
+  next()
+})
+
+// Only for rendered pages and there will be no errors
+const isLoggedIn = catchAsync(async (req, res, next) => {
+  if(!req.cookies.jwt) return next()
+  console.log('cookie set');
+  const token = req.cookies.jwt
+
+  // 1) Verification token
+  const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET)
+
+  // 2) Check if user still exists
+  const currentUser = await User.findById(decoded.id)
+  if(!currentUser) return next()
+
+  // 4) Check if user changed password after the token was issued
+  if(currentUser.changedPasswordAfter(decoded.iat)) {
+    return next()
+  }
+
+  // THERE IS A LOGGED IN USER
+  res.locals.user = currentUser // to pass user to pug templates
   next()
 })
 
@@ -192,4 +217,4 @@ const updatePassword = catchAsync(async (req, res, next) => {
   createSendToken(user, 200, res)
 })
 
-module.exports = { signup, login, protect, restrictTo, forgotPassword, resetPassword, updatePassword }
+module.exports = { signup, login, protect, isLoggedIn, restrictTo, forgotPassword, resetPassword, updatePassword }
