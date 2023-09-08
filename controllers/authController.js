@@ -67,6 +67,14 @@ const login = catchAsync(async (req, res, next) => {
   createSendToken(user, 200, res)
 })
 
+const logout = catchAsync(async (req, res, next) => {
+  res.cookie('jwt', 'loggedout', {
+    expires: new Date(Date.now() + 10 * 1000),
+    httpOnly: true
+  })
+  res.status(200).json({ status: 'success' })
+})
+
 const protect = catchAsync(async (req, res, next) => {
   // 1) Getting token and check it is there
   let token
@@ -75,8 +83,6 @@ const protect = catchAsync(async (req, res, next) => {
   } else if(req.cookies.jwt) {
     token = req.cookies.jwt
   }
-
-  console.log(token);
 
   if(!token) {
     return next(new AppError('You are not logged in! Please, log in to get access.', 401))
@@ -94,34 +100,36 @@ const protect = catchAsync(async (req, res, next) => {
     return next(new AppError('User recently changed password. Please log in again', 401))
   }
 
-
   // GRANT ACCESS TO PROTECTED ROUTES
   req.user = currentUser
   next()
 })
 
 // Only for rendered pages and there will be no errors
-const isLoggedIn = catchAsync(async (req, res, next) => {
+const isLoggedIn = async (req, res, next) => {
   if(!req.cookies.jwt) return next()
-  console.log('cookie set');
-  const token = req.cookies.jwt
+  try {
+    const token = req.cookies.jwt
 
-  // 1) Verification token
-  const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET)
+    // 1) Verification token
+    const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET)
 
-  // 2) Check if user still exists
-  const currentUser = await User.findById(decoded.id)
-  if(!currentUser) return next()
+    // 2) Check if user still exists
+    const currentUser = await User.findById(decoded.id)
+    if(!currentUser) return next()
 
-  // 4) Check if user changed password after the token was issued
-  if(currentUser.changedPasswordAfter(decoded.iat)) {
-    return next()
+    // 4) Check if user changed password after the token was issued
+    if(currentUser.changedPasswordAfter(decoded.iat)) {
+      return next()
+    }
+
+    // THERE IS A LOGGED IN USER
+    res.locals.user = currentUser // to pass user to pug templates
+    next()
+  } catch (error) {
+    next()
   }
-
-  // THERE IS A LOGGED IN USER
-  res.locals.user = currentUser // to pass user to pug templates
-  next()
-})
+}
 
 const restrictTo = (...roles) => {
   return (req, res, next) => {
@@ -217,4 +225,4 @@ const updatePassword = catchAsync(async (req, res, next) => {
   createSendToken(user, 200, res)
 })
 
-module.exports = { signup, login, protect, isLoggedIn, restrictTo, forgotPassword, resetPassword, updatePassword }
+module.exports = { signup, login, logout, protect, isLoggedIn, restrictTo, forgotPassword, resetPassword, updatePassword }
