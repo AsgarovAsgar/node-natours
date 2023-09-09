@@ -12132,18 +12132,15 @@ var updateSettings = /*#__PURE__*/function () {
     return _regeneratorRuntime().wrap(function _callee$(_context) {
       while (1) switch (_context.prev = _context.next) {
         case 0:
-          console.log({
-            data: data
-          });
-          _context.prev = 1;
+          _context.prev = 0;
           url = type === 'password' ? 'http://localhost:8000/api/v1/users/updateMyPassword' : 'http://localhost:8000/api/v1/users/updateMe';
-          _context.next = 5;
+          _context.next = 4;
           return (0, _axios.default)({
             method: 'PATCH',
             url: url,
             data: data
           });
-        case 5:
+        case 4:
           res = _context.sent;
           if (res.data.status === 'success') {
             (0, _alerts.showAlert)('success', "".concat(type.toUpperCase(), " updated successfully"));
@@ -12151,18 +12148,18 @@ var updateSettings = /*#__PURE__*/function () {
             //   location.assign('/me')
             // }, 1500)
           }
-          _context.next = 13;
+          _context.next = 12;
           break;
-        case 9:
-          _context.prev = 9;
-          _context.t0 = _context["catch"](1);
+        case 8:
+          _context.prev = 8;
+          _context.t0 = _context["catch"](0);
           console.log(_context.t0.response.data);
           (0, _alerts.showAlert)('error', _context.t0.response.data.message);
-        case 13:
+        case 12:
         case "end":
           return _context.stop();
       }
-    }, _callee, null, [[1, 9]]);
+    }, _callee, null, [[0, 8]]);
   }));
   return function updateSettings(_x, _x2) {
     return _ref.apply(this, arguments);
