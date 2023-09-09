@@ -12334,12 +12334,11 @@ if (logOutBtn) {
 if (userDataForm) {
   userDataForm.addEventListener('submit', function (e) {
     e.preventDefault();
-    var name = nameEl.value;
-    var email = emailEl.value;
-    (0, _updateSettings.updateSettings)({
-      name: name,
-      email: email
-    }, 'data');
+    var form = new FormData();
+    form.append('name', nameEl.value);
+    form.append('email', emailEl.value);
+    form.append('photo', document.querySelector('#photo').files[0]);
+    (0, _updateSettings.updateSettings)(form, 'data');
   });
 }
 if (userPasswordForm) {

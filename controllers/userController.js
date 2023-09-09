@@ -70,8 +70,8 @@ exports.getMe = (req, res, next) => {
 }
 
 exports.updateMe = catchAsync(async (req, res, next) => {
-  console.log('file', req.file);
-  console.log('body', req.body);
+  // console.log('file', req.file);
+  // console.log('body', req.body);
   // 1) Create error if user POSTs password data
   if(req.body.password || req.body.passwordConfirm) {
     return next(new AppError('This route is not for password updates. Please use /updateMyPassword', 400))
