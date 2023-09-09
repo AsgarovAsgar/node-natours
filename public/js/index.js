@@ -1,7 +1,7 @@
 import '@babel/polyfill'
 import { displayMap } from './mapbox'
 import { login, logout } from './login'
-import { updateData } from './updateSettings'
+import { updateSettings } from './updateSettings'
 
 const mapBoxEl = document.getElementById('map')
 const formEl = document.querySelector('.form--login')
@@ -10,6 +10,7 @@ const emailEl = document.querySelector('#email')
 const passwordEl = document.querySelector('#password')
 const logOutBtn = document.querySelector('.nav__el--logout')
 const userDataForm = document.querySelector('.form-user-data')
+const userPasswordForm = document.querySelector('.form-user-password')
 
 // delegation
 if(mapBoxEl) {
@@ -35,6 +36,21 @@ if(userDataForm) {
     e.preventDefault()
     const name = nameEl.value
     const email = emailEl.value
-    updateData(name, email)
+    updateSettings({ name, email }, 'data')
+  })
+}
+
+if(userPasswordForm) {
+  userPasswordForm.addEventListener('submit', async (e) => {
+    e.preventDefault()
+    document.querySelector('.btn--save-password').textContent = 'Updating...'
+    const passwordCurrent = document.querySelector('#password-current').value
+    const password = document.querySelector('#password').value
+    const passwordConfirm = document.querySelector('#password-confirm').value
+    await updateSettings({ passwordCurrent, password, passwordConfirm }, 'password')
+    document.querySelector('.btn--save-password').textContent = 'Save password'
+    document.querySelector('#password-current').value = ''
+    document.querySelector('#password').value = ''
+    document.querySelector('#password-confirm').value = ''
   })
 }
