@@ -1,12 +1,16 @@
 import '@babel/polyfill'
 import { displayMap } from './mapbox'
 import { login, logout } from './login'
+import { updateSettings } from './updateSettings'
 
 const mapBoxEl = document.getElementById('map')
-const formEl = document.querySelector('.form')
+const formEl = document.querySelector('.form--login')
+const nameEl = document.querySelector('#name')
 const emailEl = document.querySelector('#email')
 const passwordEl = document.querySelector('#password')
 const logOutBtn = document.querySelector('.nav__el--logout')
+const userDataForm = document.querySelector('.form-user-data')
+const userPasswordForm = document.querySelector('.form-user-password')
 
 // delegation
 if(mapBoxEl) {
@@ -25,4 +29,28 @@ if(formEl) {
 
 if(logOutBtn) {
   logOutBtn.addEventListener('click', logout)
+}
+
+if(userDataForm) {
+  userDataForm.addEventListener('submit', (e) => {
+    e.preventDefault()
+    const name = nameEl.value
+    const email = emailEl.value
+    updateSettings({ name, email }, 'data')
+  })
+}
+
+if(userPasswordForm) {
+  userPasswordForm.addEventListener('submit', async (e) => {
+    e.preventDefault()
+    document.querySelector('.btn--save-password').textContent = 'Updating...'
+    const passwordCurrent = document.querySelector('#password-current').value
+    const password = document.querySelector('#password').value
+    const passwordConfirm = document.querySelector('#password-confirm').value
+    await updateSettings({ passwordCurrent, password, passwordConfirm }, 'password')
+    document.querySelector('.btn--save-password').textContent = 'Save password'
+    document.querySelector('#password-current').value = ''
+    document.querySelector('#password').value = ''
+    document.querySelector('#password-confirm').value = ''
+  })
 }
