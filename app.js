@@ -19,6 +19,7 @@ const globalErrorHandler = require('./controllers/errorController')
 const tourRouter = require(`${__dirname}/routes/tourRoutes`)
 const userRouter = require(`${__dirname}/routes/userRoutes`)
 const reviewRouter = require(`${__dirname}/routes/reviewRoutes`)
+const bookingRouter = require(`${__dirname}/routes/bookingRoutes`)
 const viewRouter = require(`${__dirname}/routes/viewRoutes`)
 
 // 1) GLOBAL MIDDLEWARES
@@ -85,6 +86,7 @@ app.use('/', viewRouter)
 app.use('/api/v1/tours', tourRouter)
 app.use('/api/v1/users', userRouter)
 app.use('/api/v1/reviews', reviewRouter)
+app.use('/api/v1/bookings', bookingRouter)
 
 app.all('*', (req, res, next) => {
   // res.status(404).json({
