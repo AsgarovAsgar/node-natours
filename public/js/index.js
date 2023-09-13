@@ -2,6 +2,7 @@ import '@babel/polyfill'
 import { displayMap } from './mapbox'
 import { login, logout } from './login'
 import { updateSettings } from './updateSettings'
+import { bookTour } from './stripe'
 
 const mapBoxEl = document.getElementById('map')
 const formEl = document.querySelector('.form--login')
@@ -11,6 +12,7 @@ const passwordEl = document.querySelector('#password')
 const logOutBtn = document.querySelector('.nav__el--logout')
 const userDataForm = document.querySelector('.form-user-data')
 const userPasswordForm = document.querySelector('.form-user-password')
+const bookBtn = document.querySelector('#book-tour')
 
 // delegation
 if(mapBoxEl) {
@@ -55,5 +57,13 @@ if(userPasswordForm) {
     document.querySelector('#password-current').value = ''
     document.querySelector('#password').value = ''
     document.querySelector('#password-confirm').value = ''
+  })
+}
+
+if(bookBtn) {
+  bookBtn.addEventListener('click', e => {
+    e.target.textContent = 'Processsing...'
+    const { tourId } = e.target.dataset
+    bookTour(tourId)
   })
 }
