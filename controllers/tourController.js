@@ -31,7 +31,7 @@ const resizeTourImages = catchAsync(async (req, res, next) => {
 
   // 1) cover image
   const imageCoverFilename = `tour-${req.params.id}-${Date.now()}-cover.jpeg`
-  console.log({imageCoverFilename});
+  // console.log({imageCoverFilename});
   await sharp(req.files.imageCover[0].buffer)
   .resize(2000, 1333)
   .toFormat('jpeg')
