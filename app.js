@@ -2,6 +2,7 @@ const path = require('path')
 const express = require("express");
 const morgan = require('morgan')
 const rateLimit = require('express-rate-limit')
+const cors = require('cors')
 const helmet = require('helmet')
 const mongoSanitize = require('express-mongo-sanitize')
 const xss = require('xss-clean')
@@ -26,6 +27,10 @@ const bookingRouter = require(`${__dirname}/routes/bookingRoutes`)
 const viewRouter = require(`${__dirname}/routes/viewRoutes`)
 
 // 1) GLOBAL MIDDLEWARES
+// implement CORS
+app.use(cors())
+app.options('*', cors())
+
 //serving static files
 app.use(express.static(path.join(__dirname, 'public')))
 
