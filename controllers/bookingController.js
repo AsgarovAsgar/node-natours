@@ -13,7 +13,8 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ['card'],
     mode: 'payment',
-    success_url: `${req.protocol}://${req.get('host')}/?tour=${req.params.tourId}&user=${req.user.id}&price=${tour.price}`,
+    // success_url: `${req.protocol}://${req.get('host')}/?tour=${req.params.tourId}&user=${req.user.id}&price=${tour.price}`,
+    success_url: `${req.protocol}://${req.get('host')}/my-tours`,
     cancel_url: `${req.protocol}://${req.get('host')}/tour/${tour.slug}`,
     customer_email: req.user.email,
     client_reference_id: req.params.tourId,
@@ -49,16 +50,31 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
   })
 })
 
-exports.createBookingCheckout = catchAsync(async (req, res, next) => {
-  // This is only temporary, because it is UNSECURE: everyone can make bookings without paying
-  const { tour, user, price } = req.query
+// exports.createBookingCheckout = catchAsync(async (req, res, next) => {
+//   // This is only temporary, because it is UNSECURE: everyone can make bookings without paying
+//   const { tour, user, price } = req.query
 
-  if(!tour && !user && !price) return next()
-  await Booking.create({ tour, user, price })
+//   if(!tour && !user && !price) return next()
+//   await Booking.create({ tour, user, price })
 
-  // for removing tour, user, price from the url after booking checkout
-  res.redirect(req.originalUrl.split('?')[0])
-})
+//   // for removing tour, user, price from the url after booking checkout
+//   res.redirect(req.originalUrl.split('?')[0])
+// })
+
+exports.webhookCheckout = (req, res, next) => {
+  const signature = req.headers['stripe-signature']
+
+  let event
+  try {
+    event = stripe.webhooks.constructEvent(req.body, signature, process.env.STRIPE_WEBHOOK_SECRET)
+  } catch (err) {
+    res.status(400).send(`Webhook error: ${err.message}`)
+  }
+
+  if(event === 'checkout.session.completed') {
+    // code here
+  }
+}
 
 exports.createBooking = factory.createOne(Booking)
 exports.getBooking = factory.getOne(Booking)

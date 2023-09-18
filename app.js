@@ -24,6 +24,7 @@ const tourRouter = require(`${__dirname}/routes/tourRoutes`)
 const userRouter = require(`${__dirname}/routes/userRoutes`)
 const reviewRouter = require(`${__dirname}/routes/reviewRoutes`)
 const bookingRouter = require(`${__dirname}/routes/bookingRoutes`)
+const bookingController = require(`${__dirname}/controllers/bookingController`)
 const viewRouter = require(`${__dirname}/routes/viewRoutes`)
 
 // 1) GLOBAL MIDDLEWARES
@@ -49,6 +50,8 @@ const limiter = rateLimit({
   message: 'Too may requests from this IP. Please try again in an hour'
 })
 app.use('/api', limiter)
+
+app.post('/webhook-checkout', express.raw({ type: 'application/json' }), bookingController.webhookCheckout)
 
 // Body parser, reading data from body into req.body
 app.use(express.json({ limit: '10kb' }));
