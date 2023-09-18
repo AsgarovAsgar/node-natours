@@ -2,13 +2,17 @@ const path = require('path')
 const express = require("express");
 const morgan = require('morgan')
 const rateLimit = require('express-rate-limit')
+const cors = require('cors')
 const helmet = require('helmet')
 const mongoSanitize = require('express-mongo-sanitize')
 const xss = require('xss-clean')
 const hpp = require('hpp')
 const cookieParser = require('cookie-parser')
 
+// start express app
 const app = express();
+
+app.enable('trust proxy')
 
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'))
@@ -20,9 +24,14 @@ const tourRouter = require(`${__dirname}/routes/tourRoutes`)
 const userRouter = require(`${__dirname}/routes/userRoutes`)
 const reviewRouter = require(`${__dirname}/routes/reviewRoutes`)
 const bookingRouter = require(`${__dirname}/routes/bookingRoutes`)
+const bookingController = require(`${__dirname}/controllers/bookingController`)
 const viewRouter = require(`${__dirname}/routes/viewRoutes`)
 
 // 1) GLOBAL MIDDLEWARES
+// implement CORS
+app.use(cors())
+app.options('*', cors())
+
 //serving static files
 app.use(express.static(path.join(__dirname, 'public')))
 
@@ -41,6 +50,8 @@ const limiter = rateLimit({
   message: 'Too may requests from this IP. Please try again in an hour'
 })
 app.use('/api', limiter)
+
+app.post('/webhook-checkout', express.raw({ type: 'application/json' }), bookingController.webhookCheckout)
 
 // Body parser, reading data from body into req.body
 app.use(express.json({ limit: '10kb' }));
