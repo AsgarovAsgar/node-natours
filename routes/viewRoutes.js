@@ -5,6 +5,8 @@ const viewsController = require('./../controllers/viewsController')
 // const bookingController = require('./../controllers/bookingController')
 const { protect, isLoggedIn } = require('./../controllers/authController')
 
+router.use(viewsController.alerts)
+
 router.get('/',
   // bookingController.createBookingCheckout, 
   isLoggedIn, 
